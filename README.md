@@ -1,71 +1,104 @@
-# Getting Started with Create React App
+Coffee Test Assessment Frontend
+===============================
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#coffee-test-assessment-FE)
 
-## Available Scripts
+This project is a frontend application for a coffee ordering system, built with React and bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+Project Overview
+----------------
+
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#project-overview)
+
+This application allows users to:
+
+-   Browse a menu of coffee items
+-   Add items to their order
+-   View and modify their order
+-   Enter customer information
+-   Place an order
+-   View order details including taxes and totals
+
+Getting Started
+---------------
+
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#getting-started)
+
+To get started with this project, follow these steps:
+
+1.  Clone the repository:
+
+    ```
+    git clone https://github.com/KhadijaBashirr/coffee-test-assessment-FE.git
+
+    ```
+
+2.  Navigate to the project directory:
+
+    ```
+    cd coffee-test-assessment-FE
+
+    ```
+
+3.  Install dependencies:
+
+    ```
+    npm install
+
+    ```
+
+4.  Set up environment variables: Create a `.env` file in the root directory and add the following:
+
+    ```
+    REACT_APP_API_URL='http://localhost:3001'
+
+    ```
+
+    Adjust the URL if your backend API is hosted elsewhere.
+
+5.  Start the development server:
+
+    ```
+    npm start
+
+    ```
+
+The application will open in your default browser at [http://localhost:3000](http://localhost:3000/).
+
+Available Scripts
+-----------------
+
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#available-scripts)
 
 In the project directory, you can run:
 
-### `npm start`
+-   `npm start`: Runs the app in development mode
+-   `npm test`: Launches the test runner in interactive watch mode
+-   `npm run build`: Builds the app for production to the `build` folder
+-   `npm run eject`: Ejects the app from Create React App configuration (one-way operation)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Project Structure
+-----------------
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#project-structure)
 
-### `npm test`
+-   `src/components/`: Contains React components
+-   `src/pages/`: Contains page-level components
+-   `src/services/`: Contains API service functions
+-   `src/utils/`: Contains utility functions and helpers
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Technologies Used
+-----------------
 
-### `npm run build`
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#technologies-used)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+-   React
+-   Material-UI
+-   Axios for API calls
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+API Integration
+---------------
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[](https://github.com/KhadijaBashirr/coffee-test-assessment-FE#api-integration)
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# coffee-test-assessment-frontend
+This frontend application integrates with a backend API for fetching menu items, submitting orders, and retrieving order details. Ensure that the backend server is running and the API endpoint is correctly configured in the `.env` file.
