@@ -93,7 +93,8 @@ const OrderPage = ({ onClose }) => {
       }
 
       const response = await placeOrder(payload);
-      if (response.order) {
+      if (response) {
+        setOrderData(response);  // Update orderData with the response
         setShowPayment(true);
       } else {
         setError("Failed to place order. Please try again.");
@@ -107,7 +108,7 @@ const OrderPage = ({ onClose }) => {
   if (showPayment) {
     return (
       <PaymentPage
-        total={orderData?.total}
+        orderData={orderData}
         onBack={() => setShowPayment(false)}
       />
     );
