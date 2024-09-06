@@ -1,21 +1,128 @@
-import React, { useContext, useState } from 'react';
-import { Container, Typography, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { CartContext } from '../context/cartContext';
-import PaymentPage from './paymentPage';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PaymentPage from "./paymentPage";
+import { getCustomerByEmail, getOrderById, placeOrder } from "../services/itemsService";
 
 const OrderPage = ({ onClose }) => {
-  const { cart } = useContext(CartContext);
+  const [orderData, setOrderData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [customerData, setCustomerData] = useState(null);
+  const [customerNotFound, setCustomerNotFound] = useState(false);
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const orderId = localStorage.getItem("order_id");
+        if (!orderId) {
+          throw new Error("No order ID found in local storage");
+        }
+        const data = await getOrderById(orderId);
+        setOrderData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handlePlaceOrder = () => {
-    setShowPayment(true);
+    fetchOrder();
+  }, []);
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const handlePhoneChange = (event) => {
+    setPhone(event.target.value);
+  };
+
+  const handleEmailSubmit = async () => {
+    try {
+      const data = await getCustomerByEmail(email);
+      if (data) {
+        setCustomerData(data);
+        setCustomerNotFound(false);
+      } else {
+        setCustomerData(null);
+        setCustomerNotFound(true);
+      }
+    } catch (err) {
+      console.error("Error fetching customer data:", err);
+      setCustomerData(null);
+      setCustomerNotFound(true);
+    }
+  };
+
+  const handlePlaceOrder = async () => {
+    try {
+      let payload;
+      if (customerData) {
+        payload = {
+          id: orderData.id,
+          customer_id: customerData.id,
+        };
+      } else {
+        payload = {
+          id: orderData.id,
+          customer: {
+            email: email,
+            phone_number: phone,
+            name: name,
+          },
+        };
+      }
+
+      const response = await placeOrder(payload);
+      if (response.order) {
+        setShowPayment(true);
+      } else {
+        setError("Failed to place order. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error placing order:", err);
+      setError("An error occurred while placing the order. Please try again.");
+    }
   };
 
   if (showPayment) {
-    return <PaymentPage total={total} onBack={() => setShowPayment(false)} />;
+    return (
+      <PaymentPage
+        total={orderData?.total}
+        onBack={() => setShowPayment(false)}
+      />
+    );
+  }
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
+  if (!orderData || !orderData.order_items) {
+    return <Typography color="error">No order data available</Typography>;
   }
 
   return (
@@ -26,21 +133,99 @@ const OrderPage = ({ onClose }) => {
       <Typography variant="h4" component="h1" gutterBottom>
         Your Order
       </Typography>
+      <Typography variant="subtitle1">
+        Order ID: {orderData.id}
+      </Typography>
+      <Typography variant="subtitle1">
+        Status: {orderData.status}
+      </Typography>
+      <Typography variant="subtitle1">
+        Date: {new Date(orderData.created_at).toLocaleDateString()}
+      </Typography>
       <List>
-        {cart.map((item) => (
-          <ListItem key={item.id}>
+        {orderData.order_items.map((orderItem) => (
+          <ListItem key={orderItem.id}>
             <ListItemText
-              primary={item.name}
-              secondary={`Quantity: ${item.quantity}`}
+              primary={orderItem.item.name}
+              secondary={`Quantity: ${orderItem.quantity}`}
             />
-            <Typography>${(item.price * item.quantity).toFixed(2)}</Typography>
+            <Typography>
+              Price: ${parseFloat(orderItem.item.price).toFixed(2)}
+            </Typography>
+            <Typography>
+              Subtotal: ${(parseFloat(orderItem.item.price) * orderItem.quantity).toFixed(2)}
+            </Typography>
+            {orderItem.discount && (
+              <Typography>
+                Discount: ${parseFloat(orderItem.discount).toFixed(2)}
+              </Typography>
+            )}
           </ListItem>
         ))}
       </List>
       <Typography variant="h6" align="right">
-        Total: ${total.toFixed(2)}
+        Total: ${parseFloat(orderData.total).toFixed(2)}
       </Typography>
-      <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handlePlaceOrder}>
+
+      <TextField
+        fullWidth
+        label="Enter your email"
+        variant="outlined"
+        value={email}
+        onChange={handleEmailChange}
+        margin="normal"
+      />
+      {!customerData && !customerNotFound && (
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          sx={{ mt: 2 }}
+          onClick={handleEmailSubmit}
+          disabled={!email}
+        >
+          Check Email
+        </Button>
+      )}
+
+      {customerNotFound && (
+        <>
+          <Typography color="info" sx={{ mt: 2 }}>
+            We couldn't find your email. Please provide additional information:
+          </Typography>
+          <TextField
+            fullWidth
+            label="Enter your name"
+            variant="outlined"
+            value={name}
+            onChange={handleNameChange}
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Enter your phone"
+            variant="outlined"
+            value={phone}
+            onChange={handlePhoneChange}
+            margin="normal"
+          />
+        </>
+      )}
+
+      {customerData && (
+        <Typography variant="subtitle1" sx={{ mt: 2 }}>
+          Welcome back, {customerData.name}!
+        </Typography>
+      )}
+
+      <Button
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 2 }}
+        onClick={handlePlaceOrder}
+        disabled={!customerData && (!customerNotFound || !name || !phone)}
+      >
         Place Order
       </Button>
     </Container>

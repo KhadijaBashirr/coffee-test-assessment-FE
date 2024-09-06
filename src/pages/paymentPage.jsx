@@ -20,7 +20,7 @@ const PaymentPage = ({ total, onBack }) => {
             <Typography variant="h6">Subtotal:</Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6" align="right">${total.toFixed(2)}</Typography>
+            <Typography variant="h6" align="right">${total?.toFixed(2)}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6">Tax (8%):</Typography>
