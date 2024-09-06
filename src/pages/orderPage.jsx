@@ -12,7 +12,11 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PaymentPage from "./paymentPage";
-import { getCustomerByEmail, getOrderById, placeOrder } from "../services/itemsService";
+import {
+  getCustomerByEmail,
+  getOrderById,
+  placeOrder,
+} from "../services/itemsService";
 
 const OrderPage = ({ onClose }) => {
   const [orderData, setOrderData] = useState(null);
@@ -30,7 +34,7 @@ const OrderPage = ({ onClose }) => {
       try {
         const orderId = localStorage.getItem("order_id");
         if (!orderId) {
-          throw new Error("No order ID found in local storage");
+          throw new Error("No order in the bucket yet");
         }
         const data = await getOrderById(orderId);
         setOrderData(data);
@@ -94,7 +98,7 @@ const OrderPage = ({ onClose }) => {
 
       const response = await placeOrder(payload);
       if (response) {
-        setOrderData(response);  // Update orderData with the response
+        setOrderData(response); // Update orderData with the response
         setShowPayment(true);
       } else {
         setError("Failed to place order. Please try again.");
@@ -106,12 +110,7 @@ const OrderPage = ({ onClose }) => {
   };
 
   if (showPayment) {
-    return (
-      <PaymentPage
-        orderData={orderData}
-        onBack={() => setShowPayment(false)}
-      />
-    );
+     alert("Your order have been placed. Kindly wait 10 mins")
   }
 
   if (loading) {
@@ -126,6 +125,15 @@ const OrderPage = ({ onClose }) => {
     return <Typography color="error">No order data available</Typography>;
   }
 
+  const calculateItemTotal = (item) => {
+    const price = parseFloat(item.item.price);
+    const quantity = item.quantity;
+    const taxPercentage = item.item.tax_bucket.percentage;
+    const subtotal = price * quantity;
+    const tax = subtotal * (taxPercentage / 100);
+    return (subtotal + tax).toFixed(2);
+  };
+
   return (
     <Container maxWidth="md">
       <IconButton onClick={onClose} sx={{ mt: 2 }}>
@@ -134,30 +142,38 @@ const OrderPage = ({ onClose }) => {
       <Typography variant="h4" component="h1" gutterBottom>
         Your Order
       </Typography>
-      <Typography variant="subtitle1">
-        Order ID: {orderData.id}
-      </Typography>
-      <Typography variant="subtitle1">
-        Status: {orderData.status}
-      </Typography>
+      <Typography variant="subtitle1">Order ID: {orderData.id}</Typography>
+      <Typography variant="subtitle1">Status: {orderData.status}</Typography>
       <Typography variant="subtitle1">
         Date: {new Date(orderData.created_at).toLocaleDateString()}
       </Typography>
       <List>
         {orderData.order_items.map((orderItem) => (
-          <ListItem key={orderItem.id}>
+          <ListItem
+            key={orderItem.id}
+            sx={{
+              flexDirection: "column",
+              alignItems: "flex-start",
+              borderBottom: "1px solid #e0e0e0",
+              py: 2,
+            }}
+          >
             <ListItemText
               primary={orderItem.item.name}
               secondary={`Quantity: ${orderItem.quantity}`}
             />
-            <Typography>
+            <Typography variant="body2" sx={{ mt: 1 }}>
               Price: ${parseFloat(orderItem.item.price).toFixed(2)}
             </Typography>
-            <Typography>
-              Subtotal: ${(parseFloat(orderItem.item.price) * orderItem.quantity).toFixed(2)}
+            <Typography variant="body2">
+              Tax: {orderItem.item.tax_bucket.tax_type} (
+              {orderItem.item.tax_bucket.percentage}%)
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              Item Total: ${calculateItemTotal(orderItem)}
             </Typography>
             {orderItem.discount && (
-              <Typography>
+              <Typography variant="body2" color="error">
                 Discount: ${parseFloat(orderItem.discount).toFixed(2)}
               </Typography>
             )}
