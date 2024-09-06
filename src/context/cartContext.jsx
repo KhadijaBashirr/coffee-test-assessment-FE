@@ -19,7 +19,7 @@ export const CartProvider = ({ children }) => {
       const response = await postRequest("/api/v1/orders/add_item", {
         item_id: item.id,
         quantity: quantity,
-        order_id: orderId,
+        id: localStorage.getItem('order_id'),
       });
 
       localStorage.setItem("order_id", response?.data?.order_item?.order_id);

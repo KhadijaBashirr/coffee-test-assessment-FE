@@ -12,7 +12,8 @@ const CoffeeItem = ({ item }) => {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart(item, quantity);
+      let response = await addToCart(item, quantity);
+      console.log(response);
       setQuantity(1); // Reset quantity after adding to cart
     } catch (error) {
       console.error('Error adding item to cart:', error);
