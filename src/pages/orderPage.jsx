@@ -22,7 +22,6 @@ const OrderPage = ({ onClose }) => {
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showPayment, setShowPayment] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -99,7 +98,8 @@ const OrderPage = ({ onClose }) => {
       const response = await placeOrder(payload);
       if (response) {
         setOrderData(response); // Update orderData with the response
-        setShowPayment(true);
+        console.log(response);
+        alert(response.message);
       } else {
         setError("Failed to place order. Please try again.");
       }
@@ -108,10 +108,6 @@ const OrderPage = ({ onClose }) => {
       setError("An error occurred while placing the order. Please try again.");
     }
   };
-
-  if (showPayment) {
-     alert("Your order have been placed. Kindly wait 10 mins")
-  }
 
   if (loading) {
     return <CircularProgress />;
@@ -170,7 +166,7 @@ const OrderPage = ({ onClose }) => {
               {orderItem.item.tax_bucket.percentage}%)
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-              Item Total: ${calculateItemTotal(orderItem)}
+              Item Total: ${orderItem.price}
             </Typography>
             {orderItem.discount && (
               <Typography variant="body2" color="error">

@@ -14,10 +14,9 @@ const CoffeeItem = ({ item }) => {
     try {
       let response = await addToCart(item, quantity);
       console.log(response);
-      setQuantity(1); // Reset quantity after adding to cart
+      setQuantity(1);
     } catch (error) {
       console.error('Error adding item to cart:', error);
-      // Handle error (e.g., show an error message to the user)
     }
   };
 
@@ -26,7 +25,6 @@ const CoffeeItem = ({ item }) => {
       await addToCart(item, 1);
     } catch (error) {
       console.error('Error adding item to cart:', error);
-      // Handle error (e.g., show an error message to the user)
     }
   };
 
